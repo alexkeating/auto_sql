@@ -6,7 +6,8 @@ from psutil import virtual_memory
 import sqlite3
 
 class AutoSql():
-    def __init__(self, file, out_dir, sep=',', buffer=.3, db_name=None, encoding=None):
+    def __init__(self, file, out_dir, sep=',', headers=None, buffer=.3, 
+                 db_name=None, encoding=None):
         '''
         Instantiates the AutoSql object.
 
@@ -24,7 +25,7 @@ class AutoSql():
         self.out_dir = out_dir
         self.sep = sep
         self.buffer = buffer
-        self.names = pd.read_csv(self.file, sep=self.sep, nrows=1).columns
+        self.names = headers or pd.read_csv(self.file, sep=self.sep, nrows=1).columns
         self.encoding = encoding
 
         if db_name == None:
@@ -134,6 +135,8 @@ class AutoSql():
         :param names: names within header column.
         :return:
         '''
+        if not header:
+            names = None
         return pd.read_csv(nrows=nrows,
                            filepath_or_buffer=file,
                            sep=sep, skiprows=skiprows,
@@ -153,7 +156,11 @@ class AutoSql():
         outer_arg_list = []
         for counter, line_count in enumerate(inner_line_list):
             inner_arg_list = []
-            inner_arg_list.extend((line_count, self.file, self.sep, self.skiprows, None, self.names, self.encoding))
+            headers = None
+            has_headers = all(name for name in self.names)
+            if has_headers:
+                headers = 1
+            inner_arg_list.extend((line_count, self.file, self.sep, self.skiprows, headers, self.names, self.encoding))
             outer_arg_list.append(inner_arg_list)
             self.skiprows += line_count
         pool = Pool(len(inner_line_list))
