@@ -39,5 +39,6 @@ class TestAutoSql(unittest.TestCase):
         os.remove(test_dir)
         self.assertTrue(df1.equals(df2))
 
+
 if __name__ == '__main__':
     unittest.main()
