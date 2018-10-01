@@ -1,9 +1,14 @@
 import setuptools
+import sys
 
 description= 'auto_sql is a memory aware csv to sqlite converter.'
 
 with open("README.md", "r") as read_obj:
     long_description = read_obj.read()
+
+PANDAS_VERSION = 'pandas>=0.21.1'
+if sys.version_info > (3, 7):
+    PANDAS_VERSION = 'pandas>=0.23.3'
 
 setuptools.setup(
     name="auto_sql",
@@ -16,8 +21,8 @@ setuptools.setup(
     url="https://github.com/brettvanderwerff/auto_sql",
     packages=setuptools.find_packages(),
     install_requires=[
-              'pandas',
-              'psutil',
+              PANDAS_VERSION,
+              'psutil>=5.4.7',
           ],
     classifiers=(
         "Programming Language :: Python :: 3.4",

@@ -1,12 +1,14 @@
-from multiprocessing import  cpu_count, Pool
 import math
 import os
 import pandas as pd
-from psutil import virtual_memory
 import sqlite3
 
+from multiprocessing import  cpu_count, Pool
+from psutil import virtual_memory
+
+
 class AutoSql():
-    def __init__(self, file, out_dir, sep=',', header=None, buffer=.3, 
+    def __init__(self, file, out_dir, sep=',', header='infer', names=None, buffer=.3, 
                  db_name=None, encoding=None):
         '''
         Instantiates the AutoSql object.
@@ -16,20 +18,32 @@ class AutoSql():
         :param out_dir: full path to where database will be written.
         :param sep: the delimiter of the csv
         :param header: row to make header of the csv
+        :param names: list of column names to use. If file contains no 
+                      header row, then you should explicitly pass header=None
         :param buffer: int from 0-1, allows user to toggle amount of memory AutoSql will try to fill at a given time.
         If memory error, reduce this number.
         :param encoding: Encoding to use when reading csv.
 
         '''
         self.skiprows = 1
-        if header:
-            self.skiprows = 0
+        if header == 'infer':
+            default = []
+
+        if not names:
+            names = pd.read_csv(file, sep=sep, nrows=1).columns
+
+        if header == default and names == None:
+            self.header = 0
+
+        if header == default and names:
+            self.header = None
+        
         self.file = file
         self.out_dir = out_dir
         self.sep = sep
         self.buffer = buffer
         self.header = header
-        self.names = pd.read_csv(self.file, sep=self.sep, nrows=1).columns
+        self.names = names 
         self.encoding = encoding
 
         if db_name == None:
