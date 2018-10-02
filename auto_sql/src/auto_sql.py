@@ -26,17 +26,13 @@ class AutoSql():
 
         '''
         self.skiprows = 1
-        default = header
-        if header == 'infer':
-            default = []
-
+        
         if not names:
             names = pd.read_csv(file, sep=sep, nrows=1).columns
-
-        if header == default and names == None:
+        if header == 'infer' and list(names) == None:
             self.header = 0
 
-        if header == default and names:
+        if header == 'infer' and list(names):
             self.header = None
         
         self.file = file
