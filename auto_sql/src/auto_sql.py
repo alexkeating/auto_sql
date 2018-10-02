@@ -26,6 +26,7 @@ class AutoSql():
 
         '''
         self.skiprows = 1
+        default = header
         if header == 'infer':
             default = []
 
